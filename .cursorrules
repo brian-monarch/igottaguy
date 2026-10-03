@@ -13,7 +13,14 @@ Mobile-first, invite-only neighborhood referral directory. Spec: `Project PRD .m
 - One vertical slice per branch and pull request. Keep the diff small.
 - Every slice includes a test and a mobile screenshot check.
 - The owner merges every PR.
-- AI features write only to the `suggestions` table. An admin approves a row before it changes or publishes community data.
+
+## Publishing and moderation (settled)
+
+- Member submissions publish immediately: new contacts, edits, referrals, ratings, and reviews.
+- RLS lets a member insert and edit or remove their own content directly. Admins can hide or remove any content.
+- Flagged content is reviewed after the fact: report, then admin queue, then admin decision, with an audit record.
+- Moderation triage only orders the flag queue.
+- Only AI-generated output goes in `suggestions`. An admin approves that row before it changes community data.
 
 ## Data
 
@@ -36,6 +43,5 @@ Mobile-first, invite-only neighborhood referral directory. Spec: `Project PRD .m
 ## Product boundaries
 
 - Invite-only. Members and admins are distinct roles.
-- Members edit or remove only their own referrals and reviews.
 - “Add a Guy” is the branded action. The directory covers people, businesses, places, and activities.
 - MVP excludes a public marketplace, lead generation, booking, payments, contracting, dispute resolution, and automated third-party review collection.
