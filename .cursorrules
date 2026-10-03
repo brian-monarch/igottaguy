@@ -1,0 +1,41 @@
+# I Gotta Guy — rules for coding agents
+
+Mobile-first, invite-only neighborhood referral directory. Spec: `Project PRD .md` (`I Gotta Guy.md` is the same text). These rules and `AGENTS.md` are the accepted constraints. Other spec items marked Proposed stay out of a slice until the owner accepts them.
+
+## Stack
+
+- TypeScript web app on Supabase Postgres.
+- Enable RLS on every table. The owner reviews every RLS policy.
+- Keep secrets out of client code. xAI keys and service-role keys live only in server or edge-function secrets.
+
+## How to ship
+
+- One vertical slice per branch and pull request. Keep the diff small.
+- Every slice includes a test and a mobile screenshot check.
+- The owner merges every PR.
+- AI features write only to the `suggestions` table. An admin approves a row before it changes or publishes community data.
+
+## Data
+
+- Data scripts default to dry-run. A live write requires an explicit flag.
+- Store phone numbers in E.164.
+- Keep price as free text. Members may leave it blank.
+
+## UI
+
+- Mobile-first. Minimum tap target is 44px.
+- Meet WCAG 2.2 AA contrast, focus states, semantic labels, and keyboard support.
+- Use only these brand colors:
+  - Background: Pale Fog Gray `#F4F6F4`
+  - Surfaces/cards: Crisp White `#FFFFFF`
+  - Primary text: Deep Slate `#1E2421`
+  - Primary accent: Eucalyptus Sage `#3B7A57`
+  - Secondary accent/links: Muted Denim Blue `#4A6FA5`
+- Body text is Deep Slate on Pale Fog or White. Sage and Denim are accents (text on those backgrounds, or fills with white text). Pale Fog on White, and Sage against Denim, fail AA.
+
+## Product boundaries
+
+- Invite-only. Members and admins are distinct roles.
+- Members edit or remove only their own referrals and reviews.
+- “Add a Guy” is the branded action. The directory covers people, businesses, places, and activities.
+- MVP excludes a public marketplace, lead generation, booking, payments, contracting, dispute resolution, and automated third-party review collection.
