@@ -1,0 +1,61 @@
+---
+description: I Gotta Guy project rules. Apply to every task.
+alwaysApply: true
+---
+
+# Project
+I Gotta Guy is a private, invite-only, mobile-first neighborhood recommendation app.
+Members find and share trusted contacts (sitters, plumbers, restaurants, kid activities).
+Full requirements are in `docs/PRD.md`. Read it before starting any feature.
+Scale is small: tens of members, hundreds of contacts. Prefer simple over clever.
+
+# Stack (do not add libraries without asking)
+- React 18 + TypeScript (strict) + Vite
+- React Router, TanStack Query for server state
+- react-hook-form + zod for forms and validation
+- Tailwind CSS using the design tokens below
+- Supabase: Postgres, Auth (magic link), Row Level Security, Edge Functions
+- Vitest + Testing Library for tests
+
+# Security invariants (never violate)
+- Every table has RLS enabled. A migration that creates a table without policies is incomplete.
+- Members can edit or delete only rows they authored (`author_id = auth.uid()`). Admin role is checked server-side in policies, never only in the UI.
+- The Supabase service-role key and the xAI API key never appear in client code or any `VITE_` variable. They live in Edge Function secrets only.
+- Contributor identity is visible only to authenticated members. No public routes except login and invite acceptance.
+- Never log phone numbers, emails, or review text.
+
+# Data conventions
+- Schema changes are SQL files in `supabase/migrations/`, one concern per file. Never edit a past migration.
+- Generate types with `supabase gen types typescript` and import them. Do not hand-write DB types.
+- A contact can have many categories (join table `contact_categories`).
+- Category-specific fields (sitter rate, restaurant city) go in `contacts.details` (jsonb), validated by a zod schema per category.
+- Price is optional free text. Phone numbers are stored in E.164 and displayed formatted.
+- Every contribution (referral, review, price entry) is its own row with `author_id` and `created_at`.
+
+# AI agents inside the app
+- Agents never write to community tables. They insert rows into `suggestions` with `status = 'pending'` and a short `reason`.
+- Only an admin can approve a suggestion, and only an approval action changes community data.
+- Every agent action is written to `audit_log`.
+- Agent code runs in Edge Functions with a least-privilege database role.
+
+# UI rules
+- Mobile first. Design at 390px wide, then enhance upward.
+- Tap targets are at least 44x44px. Visible focus state on every interactive element. Target WCAG 2.2 AA.
+- Colors come only from tokens in `tailwind.config.ts`: background `#F4F6F4`, surface `#FFFFFF`, text `#1E2421`, primary `#3B7A57`, link `#4A6FA5`. No hard-coded hex values in components.
+- Every list has loading, empty, and error states. Empty states invite the first contribution.
+- Plain-language labels. "Add a Guy" is the primary action.
+
+# Code style
+- Functional components and hooks. No class components.
+- No `any`. Use `unknown` and narrow it.
+- One component per file, named exports, files under about 200 lines. Split when they grow.
+- Feature folders: `src/features/<feature>/` containing components, hooks, and queries.
+- Validate all external input with zod at the boundary.
+
+# Workflow
+- Work in small vertical slices: schema, policy, query, UI, test. One slice per branch.
+- Before writing code for a non-trivial task, state a short plan and list the files you will touch.
+- Definition of done: `npm run typecheck`, `npm run lint`, and `npm test` pass, and RLS is verified for any new table.
+- Do not refactor unrelated code in the same change.
+- If a requirement is ambiguous or conflicts with the PRD, ask instead of guessing.
+- When you make a decision the PRD does not cover, record it in `docs/DECISIONS.md` in one line.
