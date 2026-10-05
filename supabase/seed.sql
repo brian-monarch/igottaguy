@@ -1,0 +1,2 @@
+-- Category rows are inserted by the categories migration.
+-- Member accounts are not seeded. Bootstrap the first admin with the service role.
